@@ -1,4 +1,4 @@
-package gomodpapertrail
+package papertrail 
 
 import (
 	"fmt"
