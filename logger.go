@@ -1,4 +1,4 @@
-package logger
+package go-mod-papertrail 
 
 import (
 	"fmt"
