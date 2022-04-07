@@ -1,4 +1,4 @@
-package papertrail 
+package papertrail
 
 import (
 	"fmt"
@@ -31,7 +31,7 @@ func Init(url, system string) {
 	var err error
 	w, err = syslog.Dial("udp", url, syslog.LOG_SYSLOG, system)
 	if err != nil {
-		log.Fatal("failed to dial syslog")
+		log.Fatalf("failed to dial syslog, not able to contact %s as %s, error was %s", url, system, err)
 	}
 }
 
