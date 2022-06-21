@@ -5,7 +5,7 @@ This is a go module to print logs to papertrail
 This is a private repo, so in order to use it in other go project, do this:
 ```
 export GOPRIVATE=github.com/Billes/go-mod-papertrail
-go get github.com/Billes/go-mod-papertrail@V0.1.3
+go get github.com/Billes/go-mod-papertrail@V0.1.4
 ```
 
 In order to activate it do this:
@@ -21,6 +21,8 @@ In order to activate it do this:
 
 	papertrail.Init(papertrailUrl, papertrailSystem)
 ```
+
+During local developmen you may set the "PAPER_TRAIL_URL" to "", and it will only logg locally. 
 
 
 And this is how you use it:

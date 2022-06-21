@@ -26,12 +26,20 @@ const (
 )
 
 var w *syslog.Writer
+var localLogging bool
 
 func Init(url, system string) {
-	var err error
-	w, err = syslog.Dial("udp", url, syslog.LOG_SYSLOG, system)
-	if err != nil {
-		log.Fatalf("failed to dial syslog, not able to contact %s as %s, error was %s", url, system, err)
+	if url != "" {
+		var err error
+		w, err = syslog.Dial("udp", url, syslog.LOG_SYSLOG, system)
+		if err != nil {
+			log.Fatalf("failed to dial syslog, not able to contact %s as %s, error was %s", url, system, err)
+			localLogging = true
+		}
+		localLogging = false
+	} else {
+		log.Println("Will log local only")
+		localLogging = true
 	}
 }
 
@@ -65,18 +73,20 @@ func print(infoType severity, tags []string, msg string, err string) {
 		finalMsg = fmt.Sprintf("%s - %s", finalMsg, err)
 	}
 	log.Println(finalMsg)
-	switch infoType {
-	case infoSeverity:
-		w.Info(finalMsg)
-	case warningSeverity:
-		w.Warning(finalMsg)
-	case errorSeverity:
-		w.Err(finalMsg)
-	case debugSeverity:
-		w.Debug(finalMsg)
-	case criticalSeverity:
-		w.Crit(finalMsg)
-	default:
-		w.Notice(finalMsg)
+	if !localLogging {
+		switch infoType {
+		case infoSeverity:
+			w.Info(finalMsg)
+		case warningSeverity:
+			w.Warning(finalMsg)
+		case errorSeverity:
+			w.Err(finalMsg)
+		case debugSeverity:
+			w.Debug(finalMsg)
+		case criticalSeverity:
+			w.Crit(finalMsg)
+		default:
+			w.Notice(finalMsg)
+		}
 	}
 }
