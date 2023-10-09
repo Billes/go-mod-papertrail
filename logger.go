@@ -38,6 +38,7 @@ func Init(url, system string) {
 			log.Fatalf("failed to dial syslog, not able to contact %s as %s, error was %s", url, system, err)
 			remoteLogging = false
 		}
+		log.Printf("Will log remotely")
 	} else {
 		log.Println("Will log local only")
 		remoteLogging = false
@@ -56,8 +57,8 @@ func Init(url, system string) {
 		errorLevel = debugSeverity
 	default:
 		errorLevel = infoSeverity
-
 	}
+	log.Printf("Will log from %s", errorLevel)
 }
 
 func Close() {
