@@ -3,6 +3,7 @@ package papertrail
 import (
 	"fmt"
 	"log"
+	"log/syslog"
 	"os"
 )
 
@@ -18,53 +19,77 @@ type severity string
 
 const (
 	criticalSeverity severity = "CRITICAL"
-	debugSeverity    severity = "DEBUG"
 	errorSeverity    severity = "ERROR"
-	infoSeverity     severity = "INFO"
 	warningSeverity  severity = "WARNING"
+	infoSeverity     severity = "INFO"
+	debugSeverity    severity = "DEBUG"
 )
 
-//var w *syslog.Writer
-//var localLogging bool
+var w *syslog.Writer
+var remoteLogging bool
+var errorLevel severity
 
 func Init(url, system string) {
-	/* 	if url != "" {
-	   		var err error
-	   		w, err = syslog.Dial("udp", url, syslog.LOG_SYSLOG, system)
-	   		if err != nil {
-	   			log.Fatalf("failed to dial syslog, not able to contact %s as %s, error was %s", url, system, err)
-	   			localLogging = true
-	   		}
-	   		localLogging = false
-	   	} else {
-	   		log.Println("Will log local only")
-	   		localLogging = true
-	   	} */
-	log.Println("Will log locally")
-	//localLogging = true
+	remoteLogging = true
+	if url != "" {
+		var err error
+		w, err = syslog.Dial("udp", url, syslog.LOG_SYSLOG, system)
+		if err != nil {
+			log.Fatalf("failed to dial syslog, not able to contact %s as %s, error was %s", url, system, err)
+			remoteLogging = false
+		}
+	} else {
+		log.Println("Will log local only")
+		remoteLogging = false
+	}
+	errorL := os.Getenv("LOG_LEVEL")
+	switch errorL {
+	case string(criticalSeverity):
+		errorLevel = criticalSeverity
+	case string(errorSeverity):
+		errorLevel = errorSeverity
+	case string(warningSeverity):
+		errorLevel = warningSeverity
+	case string(infoSeverity):
+		errorLevel = infoSeverity
+	case string(debugSeverity):
+		errorLevel = debugSeverity
+	default:
+		errorLevel = infoSeverity
+
+	}
 }
 
 func Close() {
-	//w.Close()
+	w.Close()
 }
 
 func Info(tags []string, msg string, err string) {
-	print(infoSeverity, tags, msg, err)
+	if errorLevel == infoSeverity || errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
+		print(infoSeverity, tags, msg, err)
+	}
 }
 
 func Warning(tags []string, msg string, err string) {
-	print(warningSeverity, tags, msg, err)
+	if errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
+		print(warningSeverity, tags, msg, err)
+	}
 }
 func Error(tags []string, msg string, err string) {
-	print(errorSeverity, tags, msg, err)
+	if errorLevel == errorSeverity || errorLevel == criticalSeverity {
+		print(errorSeverity, tags, msg, err)
+	}
 }
 func Debug(tags []string, msg string, err string) {
-	print(debugSeverity, tags, msg, err)
+	if errorLevel == debugSeverity || errorLevel == infoSeverity || errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
+		print(debugSeverity, tags, msg, err)
+	}
 }
 
 func Critical(tags []string, msg string, err string) {
-	print(criticalSeverity, tags, msg, err)
-	os.Exit(1)
+	if errorLevel == criticalSeverity {
+		print(criticalSeverity, tags, msg, err)
+	}
 }
 
 func print(infoType severity, tags []string, msg string, err string) {
@@ -74,20 +99,20 @@ func print(infoType severity, tags []string, msg string, err string) {
 		finalMsg = fmt.Sprintf("%s - %s", finalMsg, err)
 	}
 	log.Println(finalMsg)
-	/* if !localLogging {
+	if remoteLogging {
 		switch infoType {
 		case infoSeverity:
-			w.Info(finalMsg)
+			_ = w.Info(finalMsg)
 		case warningSeverity:
-			w.Warning(finalMsg)
+			_ = w.Warning(finalMsg)
 		case errorSeverity:
-			w.Err(finalMsg)
+			_ = w.Err(finalMsg)
 		case debugSeverity:
-			w.Debug(finalMsg)
+			_ = w.Debug(finalMsg)
 		case criticalSeverity:
-			w.Crit(finalMsg)
+			_ = w.Crit(finalMsg)
 		default:
-			w.Notice(finalMsg)
+			_ = w.Info(finalMsg)
 		}
-	} */
+	}
 }

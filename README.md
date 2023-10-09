@@ -5,8 +5,22 @@ This is a go module to print logs to papertrail
 This is a private repo, so in order to use it in other go project, do this:
 ```
 export GOPRIVATE=github.com/Billes/go-mod-papertrail
-go get github.com/Billes/go-mod-papertrail@V0.1.4
+go get github.com/Billes/go-mod-papertrail@V0.1.5
 ```
+
+##TLDR; 
+Two environment variables has to be set up:
+
+*PAPER_TRAIL_URL* : Url to papertrail including port
+*LOG_LEVEL*: Level of logs we want to see. Its including the one you specify.
+
+1. CRITICAL
+2. ERROR
+3. WARNING
+4. INFO
+5. DEBUG
+
+
 
 In order to activate it do this:
 ```
