@@ -9,9 +9,10 @@ go get github.com/Billes/go-mod-papertrail@V0.1.5
 ```
 
 ## TLDR; 
-Two environment variables has to be set up:
+Three environment variables has to be set up:
 
 *PAPER_TRAIL_URL* : Url to papertrail including port
+*PAPER_TRAIL_SYSTEM*: The system name we want to search for in papertrail
 *LOG_LEVEL*: Level of logs we want to see. Its including the one you specify.
 
 1. CRITICAL
