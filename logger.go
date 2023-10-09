@@ -65,30 +65,32 @@ func Close() {
 	w.Close()
 }
 
+func Debug(tags []string, msg string, err string) {
+	if errorLevel == debugSeverity {
+		print(debugSeverity, tags, msg, err)
+	}
+}
+
 func Info(tags []string, msg string, err string) {
-	if errorLevel == infoSeverity || errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
+	if errorLevel == debugSeverity || errorLevel == infoSeverity {
 		print(infoSeverity, tags, msg, err)
 	}
 }
 
 func Warning(tags []string, msg string, err string) {
-	if errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
+	if errorLevel == debugSeverity || errorLevel == infoSeverity || errorLevel == warningSeverity {
 		print(warningSeverity, tags, msg, err)
 	}
 }
+
 func Error(tags []string, msg string, err string) {
-	if errorLevel == errorSeverity || errorLevel == criticalSeverity {
+	if errorLevel == debugSeverity || errorLevel == infoSeverity || errorLevel == warningSeverity || errorLevel == errorSeverity {
 		print(errorSeverity, tags, msg, err)
-	}
-}
-func Debug(tags []string, msg string, err string) {
-	if errorLevel == debugSeverity || errorLevel == infoSeverity || errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
-		print(debugSeverity, tags, msg, err)
 	}
 }
 
 func Critical(tags []string, msg string, err string) {
-	if errorLevel == criticalSeverity {
+	if errorLevel == debugSeverity || errorLevel == infoSeverity || errorLevel == warningSeverity || errorLevel == errorSeverity || errorLevel == criticalSeverity {
 		print(criticalSeverity, tags, msg, err)
 	}
 }
