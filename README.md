@@ -8,7 +8,7 @@ export GOPRIVATE=github.com/Billes/go-mod-papertrail
 go get github.com/Billes/go-mod-papertrail@V0.1.5
 ```
 
-##TLDR; 
+## TLDR; 
 Two environment variables has to be set up:
 
 *PAPER_TRAIL_URL* : Url to papertrail including port
