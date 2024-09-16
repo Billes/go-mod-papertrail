@@ -62,7 +62,9 @@ func Init(url, system string) {
 }
 
 func Close() {
-	w.Close()
+	if w != nil {
+		w.Close()
+	}
 }
 
 func Debug(tags []string, msg string, err string) {
